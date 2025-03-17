@@ -49,7 +49,7 @@ fn main() {
     let x = make_javascript_number(1.0.to_listv(), get.clone());
     let y = make_javascript_number(2.0.to_listv(), get.clone());
     println!("{},{}", x, y);
-    println!("{}", add(&x, &y, get));
+    println!("{}", add(&x, &y, get, &List::Nil));
 }
 // Output
 // ("javascript_number", 1.0),("javascript_number", 2.0)
@@ -115,7 +115,7 @@ fn main() {
     let put = move |args: List| op_cloned("insert").call(&args);
 
     install_javascript_number_package(put.clone());
-    println!("{}", add(&1.0.to_listv(), &2.0.to_listv(), get));
+    println!("{}", add(&1.0.to_listv(), &2.0.to_listv(), get, List::Nil));
 }
 // Output
 // 3.0
