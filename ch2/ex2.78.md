@@ -33,53 +33,53 @@ function make_javascript_number(n) {
 ```
 
 ## 解答
-#### 原始Rust代码
+#### main函数
 ```rust
-use sicp_rs::ch2::ch2_5::*;
-use sicp_rs::ch3::ch3_3::make_table_2d;
-use sicp_rs::prelude::*;
+use sicp_rs::ch2::ch2_5::{ArithmeticContext, install_float_package, make_float};
 fn main() {
-    // 创建操作符表
-    let optable = make_table_2d();
-    let op_cloned = optable.clone();
-    let get = move |args: List| optable("lookup").call(&args);
-    let put = move |args: List| op_cloned("insert").call(&args);
+    // 创建通用算术包上下文
+    let arith = ArithmeticContext::new();
+    install_float_package(&arith);       // float即对应于javascript_number
 
-    install_javascript_number_package(put.clone());
-    let x = make_javascript_number(1.0.to_listv(), get.clone());
-    let y = make_javascript_number(2.0.to_listv(), get.clone());
-    println!("{},{}", x, y);
-    println!("{}", add(&x, &y, get, &List::Nil));
+    let (x, y) = (make_float(1.0, &arith), make_float(2.0, &arith));
+    println!("{} + {} = {}", x, y, arith.add(&x, &y));
 }
 // Output
-// ("javascript_number", 1.0),("javascript_number", 2.0)
-// ("javascript_number", 3.0)
+// (float, 1.0) + (float, 2.0) = (float, 3.0)
 ```
-#### 更改后的代码
+#### 修改lib代码
 ##### 修改函数`attach_tag`、`type_tag`和`contents`
 ```rust
 pub fn attach_tag(tag: &str, contents: &List) -> List {
-    // Only Support f64
-    if contents.is_value() && contents.try_as_basis_value::<f64>().is_ok() {      // 新增行
-        contents.clone()                                                          // 新增行 
-    } else {
-        pair!(tag.to_string(), contents.clone())
-    }
+    //Only Support f64&i32
+    if contents.is_value()                                             // 新增行
+        && (contents.try_as_basis_value::<f64>().is_ok()               // 新增行
+            || contents.try_as_basis_value::<i32>().is_ok())           // 新增行
+    {
+        return contents.clone();                                       // 新增行 
+    };
+    pair!(tag.to_string(), contents.clone())
 }
+
 pub fn type_tag(datum: &List) -> List {
-    // Only Support f64
-    if datum.is_value() && datum.try_as_basis_value::<f64>().is_ok() {   // 新增行
-        "javascript_number".to_string().to_listv()                       // 新增行
+    // Only Support f64&i32
+    if datum.is_value() && datum.try_as_basis_value::<f64>().is_ok() {         // 新增行
+        "float".to_listv()                                                     // 新增行
+    } else if datum.is_value() && datum.try_as_basis_value::<i32>().is_ok() {  // 新增行
+        "integer".to_listv()                                                   // 新增行
     } else if datum.is_pair() {
         datum.head()
     } else {
         panic!("bad tagged datum -- TYPE-TAG")
     }
 }
+
 pub fn contents(datum: &List) -> List {
-    // Only Support f64
-    if datum.is_value() && datum.try_as_basis_value::<f64>().is_ok() {   // 新增行
-        datum.clone()                                                    // 新增行
+    // Only Support f64&i32
+    if datum.is_value()                                                        // 新增行
+        && (datum.try_as_basis_value::<f64>().is_ok() || datum.try_as_basis_value::<i32>().is_ok())  // 新增行
+    {
+        datum.clone()                                                          // 新增行   
     } else if datum.is_pair() {
         datum.tail()
     } else {
@@ -87,36 +87,22 @@ pub fn contents(datum: &List) -> List {
     }
 }
 ```
-##### 为什么只支持`f64`类型？
-在`sicp`通用型算术系统中，操作符表（二维表格）通过操作符和操作数类型作为键来存储函数。如果要支持所有数字类型（如`i32`、`f32`、`f64` 等），需要在闭包中处理所有可能的类型，这会显得过于啰嗦。而泛型函数是一集函数，并非一个函数，也无法放入二维表格中。因此，这里仅实现对`f64`类型的支持。
+##### 修改lib后输出
 ```rust
-    put(list![
-        "add",
-        list!["javascript_number", "javascript_number"],
-        ClosureWrapper::new(move |args: &List| {
-            let x = args.head();
-            let y = args.tail().head();
-            Some(tag((x.try_as_basis_value::<f64>().unwrap()
-                + y.try_as_basis_value::<f64>().unwrap())
-            .to_listv()))
-        })
-    ]);
+// 1.0 + 2.0 = 3.0
 ```
-##### 新的`main`函数
+##### 为什么只支持`f64`类型？
+在`sicp`通用型算术系统中，操作符表（二维表格）通过操作符和操作数类型作为键来存储函数。如果要支持所有数字类型（如`f32`、`f64` 等），需要在闭包中处理所有可能的类型，这会显得过于啰嗦。而泛型函数是一集函数，并非一个函数，也无法放入二维表格中。因此，这里仅实现对`f64`类型的支持。
 ```rust
-use sicp_rs::ch2::ch2_5::*;
-use sicp_rs::ch3::ch3_3::make_table_2d;
-use sicp_rs::prelude::*;
-fn main() {
-    // 创建操作符表
-    let optable = make_table_2d();
-    let op_cloned = optable.clone();
-    let get = move |args: List| optable("lookup").call(&args);
-    let put = move |args: List| op_cloned("insert").call(&args);
-
-    install_javascript_number_package(put.clone());
-    println!("{}", add(&1.0.to_listv(), &2.0.to_listv(), get, List::Nil));
+ pub fn install_float_package(arith: &ArithmeticContext) -> Option<List> {
+    install_basic_numeric_type::<f64>(               // 指定泛型类型为f64
+        "float",
+        {
+            let arith = arith.clone();
+            move |x| make_float(x, &arith)
+        },
+        arith,
+    );
+    Some("done".to_string().to_listv())
 }
-// Output
-// 3.0
 ```
