@@ -316,13 +316,15 @@ pub fn install_polynomial_package(arith: &ArithmeticContext) -> Option<List> {
         let arith = arith.clone();
         ClosureWrapper::new(move |args: &List| {
             let (variable, term_list) = (args.head(), args.tail().head());
-            let term_list = if type_tag(&term_list) == "sparse".to_listv() {
+            let term_list = if term_list.is_empty() {
+                make_terms_from_dense(&term_list, &arith)
+            } else if type_tag(&term_list) == "sparse".to_listv() {
                 eprintln!("warning: try to make dense terms, but found sparse terms arg");
                 term_list
             } else if type_tag(&term_list) == "dense".to_listv() {
                 term_list
             } else {
-                make_terms_from_sparse(&term_list, &arith)
+                make_terms_from_dense(&term_list, &arith)
             };
             Some(tag(&make_poly(variable, term_list)))
         })
@@ -331,7 +333,9 @@ pub fn install_polynomial_package(arith: &ArithmeticContext) -> Option<List> {
         let arith = arith.clone();
         ClosureWrapper::new(move |args: &List| {
             let (variable, term_list) = (args.head(), args.tail().head());
-            let term_list = if type_tag(&term_list) == "sparse".to_listv() {
+            let term_list = if term_list.is_empty() {
+                make_terms_from_sparse(&term_list, &arith)
+            } else if type_tag(&term_list) == "sparse".to_listv() {
                 term_list
             } else if type_tag(&term_list) == "dense".to_listv() {
                 eprintln!("warning: try to make sparse terms, but found dense terms arg");
@@ -385,10 +389,12 @@ fn main() {
     );
     let sparse_poly = make_polynomial_from_sparse(&"x".to_listv(), &sparse_term_list, &arith);
     let dense_poly = make_polynomial_from_dense(&"x".to_listv(), &dense_term_list, &arith);
+    println!("Sparse Polynomial: {}", sparse_poly);
     println!(
         "Sparse Polynomial: {}",
         pretty_polynomial(&sparse_poly, &arith)
     );
+    println!("Dense Polynomial: {}", dense_poly);
     println!(
         "Dense Polynomial: {}",
         pretty_polynomial(&dense_poly, &arith)
@@ -481,7 +487,9 @@ fn main() {
 #### 代码输出
 ```rust
 ==== Test 1: Create Sparse and Dense Polynomials ====
+Sparse Polynomial: (polynomial, (x, (sparse, ((2, (4, Nil)), ((1, (3, Nil)), ((0, (7, Nil)), Nil))))))
 Sparse Polynomial: (polynomial:4x^2 + 3x^1 + 7)
+Dense Polynomial: (polynomial, (x, (dense, (7, (3, (4, Nil))))))
 Dense Polynomial: (polynomial:7x^2 + 3x^1 + 4)
 
 ==== Test 2: Polynomial Addition ====
