@@ -29,8 +29,8 @@ p1 * p2 = (dense:5x^7 + 10x^6 + -1x^5 + 17x^4 + -2x^3 + -3x^2 + 14x^1 + -8)
 use sicp_rs::{
     ch2::ch2_5::{
         ArithmeticContext, attach_tag, coeff, contents, install_arithmetic_package,
-        is_empty_term_list, is_same_variable, make_integer, make_poly, make_term, order,
-        rest_terms, term_list, type_tag, variable,
+        is_same_variable, make_integer, make_poly, make_term, order, rest_terms, term_list,
+        type_tag, variable,
     },
     prelude::*,
 };
@@ -52,7 +52,9 @@ fn coeff_dense(term_list: &List) -> List {
 fn first_term_dense(term_list: &List) -> List {
     list![order_dense(term_list), coeff_dense(term_list)]
 }
-// rest_terms shared
+fn is_empty_term_list(term_list: &List) -> bool {
+    term_list.is_empty()
+}
 fn adjoin_term_dense(term: List, term_list: List, arith: &ArithmeticContext) -> List {
     if arith.is_equal_to_zero(&coeff(&term)) == true.to_listv() {
         term_list
@@ -310,7 +312,6 @@ fn main() {
         &list![5, 0, -1, 4], // 5x^3 + 0x^2 -x^1 + 4
         &arith,
     );
-
     // 打印多项式
     println!("p1 = {}", pretty_polynomial_dense(&p1));
     println!("p2 = {}", pretty_polynomial_dense(&p2));
