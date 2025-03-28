@@ -228,7 +228,7 @@ fn transform(
 
         let func = fun.tail();
         let (cost, flag, results) =
-            transform_argtypes(&input_args, fun, &arith.coercion, List::Nil, 0);
+            transform_argtypes(&input_args, fun, &arith.coercion.borrow().clone(), List::Nil, 0);
         if flag == true && cost < min_cost {
             min_cost = cost;
             println!("min arg tranforms: {}", min_cost);
