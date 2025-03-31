@@ -47,7 +47,6 @@ fn extract_value(x: &List) -> i32 {
 }
 fn make_account(balance: i32, passwd: String) -> impl Fn(&str, &str) -> List {
     let balance = Rc::new(RefCell::new(balance));
-    let passwd = Rc::new(passwd);
 
     let withdraw = {
         let balance = balance.clone();
@@ -71,13 +70,13 @@ fn make_account(balance: i32, passwd: String) -> impl Fn(&str, &str) -> List {
         })
     };
     let dispatch = {
-        let passwd = passwd.clone();
         move |pass: &str, m: &str| {
             if pass != passwd.as_str() {
                 return "Incorrect password".to_listv();
             }
 
             match m {
+                // dispatch可能被调用多次，每次均消耗withdraw，故withdraw需要Rc包裹
                 "withdraw" => ClosureWrapper::new({
                     let withdraw = withdraw.clone();
                     move |x| Some(withdraw(x).to_listv())
@@ -102,7 +101,7 @@ fn handle_response(response: List, x: i32) -> List {
     )
 }
 fn main() {
-    let acc = Rc::new(make_account(100, "secret password".to_string()));
+    let acc = make_account(100, "secret password".to_string());
     println!(
         "{}",
         handle_response(acc("secret password", "withdraw"), 40)
