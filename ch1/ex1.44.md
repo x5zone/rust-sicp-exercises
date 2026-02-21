@@ -30,7 +30,7 @@ def n_smooth(f,n): return lambda x: repeated(smooth, n)(f)(x)
 * rust
     * 首先使用1.43节的repeated函数，在rust里面做不到，原因见注释。仿着repeated写了一个n_smooth
     * 闭包的类型神烦，静态分发的代码我写不出来=。=以后这种高阶函数的题，不用rust了。。。
-    * Box<dyn Fn>这个，因为"Rust 要求放入 Box<dyn Trait> 的闭包必须是 'static 的，也就是说，闭包不能依赖任何短生命周期的数据"，所以写了一大堆'static。
+    * Box&lt;dyn Fn&gt;这个，因为"Rust 要求放入 Box&lt;dyn Trait&gt; 的闭包必须是 'static 的，也就是说，闭包不能依赖任何短生命周期的数据"，所以写了一大堆'static。
 ```rust
 use num::Float;
 
