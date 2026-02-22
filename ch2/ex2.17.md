@@ -38,7 +38,7 @@ function last_pair(items) {
 }
 ```
 * 接下来给出rust版本的代码(使用enum构建了一个链表):
-    * V(T)是为了将T类型转换成List<T>类型，从而V(T)和List<T>均可以塞入链表中。
+    * V(T)是为了将T类型转换成List&lt;T&gt;类型，从而V(T)和List&lt;T&gt;均可以塞入链表中。
 ```rust
 #[derive(Debug, Clone)]
 enum List<T> {

@@ -11,9 +11,8 @@ build-dir = "book"
 default-theme = "navy"
 preferred-dark-theme = "navy"
 additional-css = ["mdbook/custom.css"]
-additional-js = ["mdbook/comment.js"]
+additional-js = ["mdbook/mathjax.js", "mdbook/comment.js"]
 git-repository-url = "https://github.com/x5zone/rust-sicp-exercises"
 edit-url-template = "https://github.com/x5zone/rust-sicp-exercises/edit/main/{path}"
 
-[preprocessor.katex]
-after = ["links"]
+
