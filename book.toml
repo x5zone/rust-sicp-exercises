@@ -2,7 +2,6 @@
 title = "SICP in Rust"
 authors = ["x5zone"]
 language = "zh-CN"
-multilingual = false
 src = "."
 
 [build]
