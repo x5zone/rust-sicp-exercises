@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 :root {
-    --content-max-width: 48rem;
+    --content-max-width: 75rem;
     --font-serif: 'Source Serif 4', Georgia, serif;
     --font-code: 'Fira Code', Consolas, 'Courier New', monospace;
 }
