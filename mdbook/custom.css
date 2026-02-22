@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+    --content-max-width: 48rem;
+    --font-serif: 'Source Serif 4', Georgia, serif;
+    --font-code: 'Fira Code', Consolas, 'Courier New', monospace;
+}
+
+html {
+    font-family: var(--font-serif);
+}
+
+body {
+    font-family: var(--font-serif);
+}
+
+.content main {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    font-family: var(--font-serif);
+}
+
+code,
+pre,
+.hljs {
+    font-family: var(--font-code);
+}
+
+pre code {
+    font-family: var(--font-code);
+}
+
+.navy a {
+    color: #8abeb7;
+}
+
+.navy a:hover {
+    color: #a8d4cf;
+}
+
+.navy .content a {
+    color: #8abeb7;
+    text-decoration: none;
+}
+
+.navy .content a:hover {
+    color: #a8d4cf;
+    text-decoration: underline;
+}
+
+.navy .sidebar a {
+    color: #8abeb7;
+}
+
+.navy .sidebar a:hover {
+    color: #a8d4cf;
+}
+
+.navy .nav-chapters {
+    color: #8abeb7;
+}
+
+.navy .nav-chapters:hover {
+    color: #a8d4cf;
+}
+
+.menu-bar {
+    font-family: var(--font-serif);
+}
