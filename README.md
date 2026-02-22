@@ -7,7 +7,6 @@
 ## 项目链接
 
 - GitHub 项目地址：[rust-sicp-exercises](https://github.com/x5zone/rust-sicp-exercises)
-- 在线文档地址：[GitBook 在线文档](https://x5zone.gitbook.io/x5zone/sicp-rust)
 
 ---
 
